@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 #include "errorMessages.h"
 
 //todo dividere in files
@@ -26,15 +27,15 @@ public:
 	class vertex_iterator
 	{
 	public:
-		using iterator_category = std::forward_iterator_tag;	//perchË proprio un iteratore forward?
-		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori Ë un ptrdiff_type 
+		using iterator_category = std::forward_iterator_tag;	//perch√® proprio un iteratore forward?
+		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori √® un ptrdiff_type 
 		using value = T;										//il tipo di dato che contiene l'iteratore
 		using pointer = value*;									//il tipo di dato puntato dall'iteratore
 		using reference = value&;								//il tipo riferimento puntato dall'iteratore
 		
 		vertex_iterator() : ptr{ nullptr } {};							//costruttore di default
-		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchË gi‡ implicitamente implementato TODO capire(?)
-		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchË gi‡ implicitamente implementato TODO capire(?)
+		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perch√® gi√† implicitamente implementato TODO capire(?)
+		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perch√® gi√† implicitamente implementato TODO capire(?)
 		vertex_iterator& operator++()		{ ++ptr; return *this; }						//operatore di incremento prefisso
 		vertex_iterator operator++(int)	{ vertex_iterator tmp{*this}; ++ptr; return tmp; }	//operatore di incemento postfisso
 		inline reference operator*() { return *ptr; }										//operatore di dereferenziazione
@@ -62,15 +63,15 @@ public:
 	{
 	public:
 		
-		using iterator_category = std::forward_iterator_tag;	//perchË proprio un iteratore forward?
-		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori Ë un ptrdiff_type 
+		using iterator_category = std::forward_iterator_tag;	//perch√® proprio un iteratore forward?
+		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori √® un ptrdiff_type 
 		using value = T;										//il tipo di dato che contiene l'iteratore
 		using pointer = value*;									//il tipo di dato puntato dall'iteratore
 		using reference = value&;								//il tipo riferimento puntato dall'iteratore
 
 		edge_iterator() : ptr{ nullptr } {};							//costruttore di default
-		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchË gi‡ implicitamente implementato TODO capire(?)
-		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchË gi‡ implicitamente implementato TODO capire(?)
+		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perch√® gi√† implicitamente implementato TODO capire(?)
+		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perch√® gi√† implicitamente implementato TODO capire(?)
 		edge_iterator& operator++() { ++ptr; return *this; }								//operatore di incremento prefisso
 		edge_iterator operator++(int) { edge_iterator tmp{ *this }; ++ptr; return tmp; }	//operatore di incemento postfisso
 		inline reference operator*() { return *ptr; }										//operatore di dereferenziazione
