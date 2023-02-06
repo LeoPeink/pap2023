@@ -17,7 +17,10 @@ std::unordered_map<T, int> dijkstra(Graph<T> g, T src)        //TODO min heap pe
 
     //iterate through all vertices
     while (!queue.empty()) {
-        auto u = std::min_element(queue.begin(), queue.end())
+        auto u = std::min_element(dist.begin(), dist.end(),
+        [](const auto &a, const auto &b) {
+        return a.second < b.second;
+        });
 
                 queue.erase(u);
         }
