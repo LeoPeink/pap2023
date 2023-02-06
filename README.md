@@ -12,9 +12,11 @@ Per l'utilizzo della classe Graph sono necessarie le seguenti librerie std:
 Graph è una classe template che accetta qualsiasi tipo primitivo come T.
 
 #### Attributi
-(private) std::vector<T>                                     vertices
-(private) std::string                                        name
-(private) std::unordered_map<T, std::unordered_map<T, int>>  edges;
+ (private) std::vector<T> vertices
+ 
+ (private) std::string name
+
+ (private) std::unordered_map<T, std::unordered_map<T, int>> edges;
 
 #### Metodi
 void addVertex(T v): aggiunge un vertex a vertices, bisogna specificare un identificatore (di tipo T).
