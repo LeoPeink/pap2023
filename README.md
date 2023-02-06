@@ -32,3 +32,11 @@ void removeVertex(T v): rimuove v da vertices
  vertex_iterator v_begin(): ritorna un iteratore al primo elemento del vettore
 
  vertex_iterator v_end(): ritorna un iteratore all'ultimo elemento del vettore
+ 
+ ### Metodi di classe
+ 
+ std::unordered_map<T, int>> dijkstra(Graph<T> g, T src): esegue l'algoritmo di dijkstra sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
+ 
+std::unordered_map<T, int>> bellmanFord(Graph<T> g, T src): esegue l'algoritmo di dijkstra sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
+ 
+ 
