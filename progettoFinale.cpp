@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
+#include <limits.h>
 #include "errorMessages.h"
 
 //todo dividere in files
