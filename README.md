@@ -38,8 +38,8 @@ void removeVertex(T v): rimuove v da vertices
  
  ### Metodi di classe
  
- std::unordered_map<T, int>> dijkstra(Graph<T> g, T src): esegue l'algoritmo di dijkstra sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
+ std::unordered_map<T, int>> dijkstra(Graph<T> g, T src): esegue l'algoritmo di Dijkstra sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
  
-std::unordered_map<T, int>> bellmanFord(Graph<T> g, T src): esegue l'algoritmo di dijkstra sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
+std::unordered_map<T, int>> bellmanFord(Graph<T> g, T src): esegue l'algoritmo di Bellman-Ford sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
  
  
