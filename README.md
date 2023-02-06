@@ -2,9 +2,12 @@
 Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023
  
 # DOCUMENTATION
-Per l'utilizzo della classe Graph sono necessarie le seguenti librerie std:
+Per l'utilizzo della classe Graph sono necessarie le seguenti librerie:
+
 -iostream
+
 -vector
+
 -algorithm
 
 ## Graph
