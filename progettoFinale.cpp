@@ -2,7 +2,6 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
-#include <limits.h>
 #include "errorMessages.h"
 
 //todo dividere in files
@@ -21,8 +20,13 @@ public:
 	void addEdge(T src, T dest, int weight);
 	void removeEdge(T src, T dest);
 
+	//metodi statici
+	static const std::unordered_map<T, int> dijkstra(Graph<T> g, T src);		//TODO min heap per la coda, ora è v2
+	static const std::unordered_map<T, int> bellmanFord(Graph<T> g, T src);
+	//statici perchè metodi di classe, const perchè non devono modificare il grafo ma solo generare la tabella di distanze: per lo stesso motivo, passiamo il grafo per valore.
+
 	//getter
-	std::vector<T> getVertices() { return vertices;}
+	std::vector<T> getVertices() { return vertices; }
 	std::unordered_map<T, std::unordered_map<T, int>> getEdges() { return edges; }
 
 	//iteratori
@@ -34,23 +38,23 @@ public:
 		using value = T;										//il tipo di dato che contiene l'iteratore
 		using pointer = value*;									//il tipo di dato puntato dall'iteratore
 		using reference = value&;								//il tipo riferimento puntato dall'iteratore
-		
+
 		vertex_iterator() : ptr{ nullptr } {};							//costruttore di default
 		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchè già implicitamente implementato TODO capire(?)
 		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchè già implicitamente implementato TODO capire(?)
-		vertex_iterator& operator++()		{ ++ptr; return *this; }						//operatore di incremento prefisso
-		vertex_iterator operator++(int)	{ vertex_iterator tmp{*this}; ++ptr; return tmp; }	//operatore di incemento postfisso
+		vertex_iterator& operator++() { ++ptr; return *this; }						//operatore di incremento prefisso
+		vertex_iterator operator++(int) { vertex_iterator tmp{ *this }; ++ptr; return tmp; }	//operatore di incemento postfisso
 		inline reference operator*() { return *ptr; }										//operatore di dereferenziazione
 		inline pointer operator->() { return ptr; }											//operatore puntatore			
-		inline bool operator==(const vertex_iterator& it) { return ptr==it.ptr; }			//operatore uguaglianza
-		inline bool operator!=(const vertex_iterator& it) { return ptr !=it.ptr; }			//operatore disuguaglianza
+		inline bool operator==(const vertex_iterator& it) { return ptr == it.ptr; }			//operatore uguaglianza
+		inline bool operator!=(const vertex_iterator& it) { return ptr != it.ptr; }			//operatore disuguaglianza
 		//NB:inline per efficienza, non serve chiamare la funzione, basta far copiare il codice al compilatore al momento della chiamata
-		
+
 		//iterator(typename std::vector<T>::iterator it) : it{ it } {}; 
 
 	private:
 		vertex_iterator(pointer ptr) : ptr{ ptr } {};		//costruttore privato per creare un iteratore a partire da un puntatore: privato per evitare mismatch di tipi tra il container e l'iteratore
-		
+
 		pointer ptr; //puntatore all'elemento associato all'iteratore
 
 		friend class Graph<T>;	//permette a Graph di accedere ai membri privati di iterator
@@ -59,10 +63,10 @@ public:
 	inline vertex_iterator v_begin() { return vertex_iterator{ &vertices[0] }; }	//ritorna un iteratore al primo elemento del vettore,
 	inline vertex_iterator v_end() { return vertex_iterator{ &vertices[vertices.size() - 1] + 1 }; }	//ritorna un iteratore all'ultimo elemento del vettore,
 
-	class edge_iterator 
+	class edge_iterator
 	{
 	public:
-		
+
 		using iterator_category = std::forward_iterator_tag;	//perchè proprio un iteratore forward?
 		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori è un ptrdiff_type 
 		using value = T;										//il tipo di dato che contiene l'iteratore
@@ -79,16 +83,16 @@ public:
 		inline bool operator==(const edge_iterator& it) { return ptr == it.ptr; }					//operatore uguaglianza
 		inline bool operator!=(const edge_iterator& it) { return ptr != it.ptr; }					//operatore disuguaglianza
 		//NB:inline per efficienza, non serve chiamare la funzione, basta far copiare il codice al compilatore al momento della chiamata
-		
+
 	private:
-		
+
 		edge_iterator(pointer ptr) : ptr{ ptr } {};		//costruttore privato per creare un iteratore a partire da un puntatore: privato per evitare mismatch di tipi tra il container e l'iteratore
 		pointer ptr;									//puntatore all'elemento associato all'iteratore
 		friend class Graph<T>;
 	};
 
-	inline edge_iterator e_begin() {return  edge_iterator{ edges.begin()}; }	//ritorna un iteratore al primo elemento della mappa, TODO CHECK SE FUNZIONA
-	inline edge_iterator e_end() { return edge_iterator{ edges.end()}; }	//ritorna un iteratore all'ultimo elemento del vettore,	TODO CHECK SE FUNZIONA
+	inline edge_iterator e_begin() { return  edge_iterator{ edges.begin() }; }	//ritorna un iteratore al primo elemento della mappa, TODO CHECK SE FUNZIONA
+	inline edge_iterator e_end() { return edge_iterator{ edges.end() }; }	//ritorna un iteratore all'ultimo elemento del vettore,	TODO CHECK SE FUNZIONA
 
 private:
 	std::string name;
@@ -103,7 +107,7 @@ private:
 template <typename T>
 void Graph<T>::addVertex(T vertex)
 {
-	
+
 	if (std::find(vertices.begin(), vertices.end(), vertex) == vertices.end())	//if the vertex is not already existing in the vector
 	{
 		vertices.push_back(vertex);												//add it to the vector of vertices
@@ -112,7 +116,7 @@ void Graph<T>::addVertex(T vertex)
 	{
 		std::cout << E_VERTEX_ALREADY_EXISTING;
 	}
-																				//else ignore, potential TODO: error message abo
+	//else ignore, potential TODO: error message abo
 }
 
 template <typename T>
@@ -158,7 +162,7 @@ void Graph<T>::removeEdge(T src, T dest) {
 
 
 template <typename T>
-std::unordered_map<T, int> dijkstra(Graph<T> g, T src)		//TODO min heap per la coda, ora è v2
+const std::unordered_map<T, int> Graph<T>::dijkstra(Graph<T> g, T src)		//TODO min heap per la coda, ora è v2
 {
 	// implementazione dell'algoritmo di Dijkstra
 	std::unordered_map<T, int> dist;		//mappa di distanze A : 6, C : 9
@@ -200,9 +204,9 @@ std::unordered_map<T, int> dijkstra(Graph<T> g, T src)		//TODO min heap per la c
 				}
 				//std::cout << std::endl;
 			}
-			catch(const std::out_of_range e)
+			catch (const std::out_of_range e)
 			{
-				//
+				//TODO gestire l'eccezione, viene quando un vertice non ha vicini
 			}
 		}
 	}
@@ -212,9 +216,9 @@ std::unordered_map<T, int> dijkstra(Graph<T> g, T src)		//TODO min heap per la c
 
 
 
-	
+
 template <typename T>
-std::unordered_map<T, int> bellmanFord(Graph<T> g, T src)
+const std::unordered_map<T, int> Graph<T>::bellmanFord(Graph<T> g, T src)
 {
 	std::unordered_map<T, int> dist;		//mappa di distanze A : 6, C : 9
 
@@ -280,7 +284,7 @@ int main()
 	g.addVertex("D");
 	g.addVertex("E");
 	//add edges
-	
+
 	g.addEdge("S", "A", 10);
 	g.addEdge("S", "E", 8);
 	g.addEdge("A", "C", 2);
@@ -308,19 +312,26 @@ int main()
 	g.addEdge("C", "B", 1);
 	g.addEdge("C", "D", 4);
 	g.addEdge("C", "E", 5);
-	g.addEdge("E","D",1);
-	
-	
-	
+	g.addEdge("E", "D", 1);
+
+
+
 	const std::string src = "A"; //soluzione al prob del compilatore, non puoi usare puntatori a char e string costanti come template
-	auto res = dijkstra(g, src);
+	auto res = Graph<std::string>::dijkstra(g, src);
 
 	for (auto it = res.begin(); it != res.end(); ++it)
 	{
 		std::cout << it->first << " " << it->second << std::endl;
 	}
-	
-	
+
+	res = Graph<std::string>::bellmanFord(g, src);
+
+	for (auto it = res.begin(); it != res.end(); ++it)
+	{
+		std::cout << it->first << " " << it->second << std::endl;
+	}
+
+
 	/*
 	auto res = bellmanFord(g1, src);
 	for (auto it = res.begin(); it != res.end(); ++it)
