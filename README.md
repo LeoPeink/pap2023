@@ -18,8 +18,13 @@ Graph è una classe template che accetta qualsiasi tipo primitivo come T.
 
 #### Metodi
 void addVertex(T v): aggiunge un vertex a vertices, bisogna specificare un identificatore (di tipo T).
+ 
 void removeVertex(T v): rimuove v da this.vertices
-void addEdge(T src, T dst, int weight): aggiunge un arco da srt a dst di peso weight.
-void removeEdge(T src, T dst):  rimuove il vertice da src a dst
-vertex_iterator v_begin(): ritorna un iteratore al primo elemento del vettore
-vertex_iterator v_end(): ritorna un iteratore all'ultimo elemento del vettore
+
+ void addEdge(T src, T dst, int weight): aggiunge un arco da srt a dst di peso weight.
+
+ void removeEdge(T src, T dst):  rimuove il vertice da src a dst
+
+ vertex_iterator v_begin(): ritorna un iteratore al primo elemento del vettore
+
+ vertex_iterator v_end(): ritorna un iteratore all'ultimo elemento del vettore
