@@ -4,7 +4,7 @@ Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023 : realizzazio
 
 Autori: Leo Peinkhofer, Lorenzo Di Bernardo
  
-# Documentazione
+# Documentazione Graph
 Includendo Graph.cpp si includono automaticamente le librerie:
 "iostream", "unordered_map", "vector", "limits.h" e "algorithm"
 
@@ -45,6 +45,8 @@ void removeVertex(T v): rimuove v da vertices
  std::unordered_map<T, int>> dijkstra(Graph<T> g, T src): esegue l'algoritmo di Dijkstra sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
  
 std::unordered_map<T, int>> bellmanFord(Graph<T> g, T src): esegue l'algoritmo di Bellman-Ford sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
+ 
+# Varie
  
  ## errorMessages.h
  
