@@ -3,191 +3,165 @@
 
 #include <vector>
 #include <unordered_map>
-#include <queue>
+#include <algorithm>
+#include <iostream>
+#include <limits.h>
+
+#include "errorMessages.h"
+
+//todo dividere in files
 
 template <typename T>
-class Graph {
+class Graph
+{
 public:
-    
-    Graph(); // costruttore
-    Graph(std::string name) : name(name) {} // costruttore che salva anche un nome per il grafo
+	//costruttori
+	Graph() {};
+	Graph(std::string name) : name{ name } {};
 
-    ~Graph() {name.clear();} // distruttore che cancella anche il nome del grafo
+	//funzioni
+	void addVertex(T vertex);    // non sono metodi costanti ne statici in quanto modificano l'oggetto
+	void removeVertex(T vertex);
+	void addEdge(T src, T dest, int weight);
+	void removeEdge(T src, T dest);
 
-    // funzioni che aggiungono e rimuovono vertici e archi del grafo
-    void addVertex(T vertex);    // non sono metodi costanti ne statici in quanto modificano l'oggetto
-    void removeVertex(T vertex);
-    void addEdge(T src, T dest, int weight);
-    void removeEdge(T src, T dest);
+	//metodi statici
+	static const std::unordered_map<T, int> dijkstra(Graph<T> g, T src);		//TODO min heap per la coda, ora è v2
+	static const std::unordered_map<T, int> bellmanFord(Graph<T> g, T src);
+	//statici perchè metodi di classe, const perchè non devono modificare il grafo ma solo generare la tabella di distanze: per lo stesso motivo, passiamo il grafo per valore.
 
-    const std::string getName() const { return name;} // metodo costante per ritornare il nome del grafo
+	//getter
+	std::vector<T> getVertices() { return vertices; }
+	std::unordered_map<T, std::unordered_map<T, int>> getEdges() { return edges; }
 
-    std::unordered_map<T, int> dijkstra(Graph<T>& graph, T src); // dichiarazione degli algoritmi di orienatento
-    std::unordered_map<T, int> bellmanFord(Graph<T>& graph, T src);
-    
-    
-    class VertexIterator { // iteratore per i vertici del grafo
-    public:
-        
-        VertexIterator(Graph<T>& graph) : graph(graph), it(graph.vertices.begin()) {} // costruttore che inzia dal primo elemento dell'array di partenza
+	//iteratori
+	class vertex_iterator
+	{
+	public:
+		using iterator_category = std::forward_iterator_tag;	//perchè proprio un iteratore forward?
+		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori è un ptrdiff_type 
+		using value = T;										//il tipo di dato che contiene l'iteratore
+		using pointer = value*;									//il tipo di dato puntato dall'iteratore
+		using reference = value&;								//il tipo riferimento puntato dall'iteratore
 
-        // funzioni per la navigazione
-        T next() {return *(it++);} // ritona accesso alla zona di memoria del prossimo elemento sfruttando l'iteratore
-        bool hasNext() {return it != graph->vertices.end();} // True se elemento puntato dall'iteratore è diverso dall'ultimo
-//!! forse la sintasi di hasNext è troppo sofisticata ? cambiare anche i nomi delle funzioni
-    private:                                                
-        Graph<T>& graph;
-        typename std::vector<T>::iterator it; // it è un iteratore della classe vector
-    };
+		vertex_iterator() : ptr{ nullptr } {};							//costruttore di default
+		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchè già implicitamente implementato TODO capire(?)
+		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchè già implicitamente implementato TODO capire(?)
+		vertex_iterator& operator++() { ++ptr; return *this; }						//operatore di incremento prefisso
+		vertex_iterator operator++(int) { vertex_iterator tmp{ *this }; ++ptr; return tmp; }	//operatore di incemento postfisso
+		inline reference operator*() { return *ptr; }										//operatore di dereferenziazione
+		inline pointer operator->() { return ptr; }											//operatore puntatore			
+		inline bool operator==(const vertex_iterator& it) { return ptr == it.ptr; }			//operatore uguaglianza
+		inline bool operator!=(const vertex_iterator& it) { return ptr != it.ptr; }			//operatore disuguaglianza
+		//NB:inline per efficienza, non serve chiamare la funzione, basta far copiare il codice al compilatore al momento della chiamata
 
-    // iteratore per gli archi
-    class EdgeIterator {
-    public:
-        // costruttore
-        EdgeIterator(Graph<T>& graph, T vertex) : graph(graph), it(graph.edges[vertex].begin()) {} 
+		//iterator(typename std::vector<T>::iterator it) : it{ it } {}; 
 
-/* starta l'iteratore dal nodo specificato: nella mappa degli edge cerca quello che ha come chiave il vertice selezionato
- graph.edges[vertex] è l'elenco degli archi uscenti dal vertice specificato, rappresentato come una mappa dove la chiave è il vertice di arrivo e il valore è il peso dell'arco.
- graph.edges[vertex].begin() è un iteratore che punta alla prima posizione dell'elenco degli archi uscenti dal vertice specificato.
-Immagina di avere un armadietto per ogni studente della scuola, dove ogni armadietto ha un numero univoco. Ogni armadietto contiene una serie di scomparti, dove ogni scomparto è identificato da un numero univoco.
-Il numero univoco dell'armadietto è la chiave principale della mappa di mappe, mentre il numero univoco del singolo scomparto è la chiave secondaria. Il contenuto di ogni scomparto è il valore associato alla coppia chiave principale-chiave secondaria.
-In questa metafora, per accedere al contenuto di uno specifico scomparto, si utilizzerebbe la chiave dell'armadietto per accedere all'armadietto e poi la chiave del singolo scomparto per accedere al contenuto.*/
-//!! anche qua troppo sofisticato
+	private:
+		vertex_iterator(pointer ptr) : ptr{ ptr } {};		//costruttore privato per creare un iteratore a partire da un puntatore: privato per evitare mismatch di tipi tra il container e l'iteratore
 
-// ultilizza il riferimento "& graph" per essere sicuri che l'oggetto esista
+		pointer ptr; //puntatore all'elemento associato all'iteratore
 
-        // funzioni per la navigazione
-        std::pair<T, int> next() {return {it->first, it->second};} // first ritona la chiave e dunque l'edge di arrivo mentre second ritorna il peso dell'arco
-//!!cambiare sintassi troppo sofisticata
-        bool hasNext() {return it != graph->edges[vertex].end();}
-    private:
-        Graph<T>* graph;
-        T vertex;
-        typename std::unordered_map<T, int>::iterator it; //it è un iteratore della classe map
-    };
+		friend class Graph<T>;	//permette a Graph di accedere ai membri privati di iterator
+	};
+
+	inline vertex_iterator v_begin() { return vertex_iterator{ &vertices[0] }; }	//ritorna un iteratore al primo elemento del vettore,
+	inline vertex_iterator v_end() { return vertex_iterator{ &vertices[vertices.size() - 1] + 1 }; }	//ritorna un iteratore all'ultimo elemento del vettore,
+
+	class edge_iterator
+	{
+	public:
+
+		using iterator_category = std::forward_iterator_tag;	//perchè proprio un iteratore forward?
+		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori è un ptrdiff_type 
+		using value = T;										//il tipo di dato che contiene l'iteratore
+		using pointer = value*;									//il tipo di dato puntato dall'iteratore
+		using reference = value&;								//il tipo riferimento puntato dall'iteratore
+
+		edge_iterator() : ptr{ nullptr } {};							//costruttore di default
+		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchè già implicitamente implementato TODO capire(?)
+		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchè già implicitamente implementato TODO capire(?)
+		edge_iterator& operator++() { ++ptr; return *this; }								//operatore di incremento prefisso
+		edge_iterator operator++(int) { edge_iterator tmp{ *this }; ++ptr; return tmp; }	//operatore di incemento postfisso
+		inline reference operator*() { return *ptr; }										//operatore di dereferenziazione
+		inline pointer operator->() { return ptr; }											//operatore puntatore			
+		inline bool operator==(const edge_iterator& it) { return ptr == it.ptr; }					//operatore uguaglianza
+		inline bool operator!=(const edge_iterator& it) { return ptr != it.ptr; }					//operatore disuguaglianza
+		//NB:inline per efficienza, non serve chiamare la funzione, basta far copiare il codice al compilatore al momento della chiamata
+
+	private:
+
+		edge_iterator(pointer ptr) : ptr{ ptr } {};		//costruttore privato per creare un iteratore a partire da un puntatore: privato per evitare mismatch di tipi tra il container e l'iteratore
+		pointer ptr;									//puntatore all'elemento associato all'iteratore
+		friend class Graph<T>;
+	};
+
+	inline edge_iterator e_begin() { return  edge_iterator{ edges.begin() }; }	//ritorna un iteratore al primo elemento della mappa, TODO CHECK SE FUNZIONA
+	inline edge_iterator e_end() { return edge_iterator{ edges.end() }; }	//ritorna un iteratore all'ultimo elemento del vettore,	TODO CHECK SE FUNZIONA
 
 private:
-    std::vector<T> vertices;
-    std::unordered_map<T, std::unordered_map<T, int>> edges; //si usa mappa per questioni di efficienza giustificare !!
-// è una mappa di mappe
+	std::string name;
+	std::vector<T> vertices;
+	std::unordered_map<T, std::unordered_map<T, int>> edges;
 
-//!! nell'utilizzo di mappe di mappe risiede la principale vulnerabilita del progetto sarebbe il caso di pensare ad un approccio alternativo anche se il concetto di annidare contenitori è valido, magari provare con gli array anche se meno efficienti
-
-/*Immagina di voler rappresentare un grafo con vertici rappresentati da scatole e archi rappresentati da etichette attaccate alle scatole. Ogni etichetta contiene informazioni su un vertice di destinazione e il peso dell'arco.
-La mappa principale rappresenta l'insieme di tutte le scatole del grafo (i vertici), con i nomi delle scatole come chiavi e ogni scatola contiene una mappa secondaria che rappresenta le etichette attaccate alla scatola (gli archi uscenti dal vertice). La mappa secondaria ha come chiave il nome del vertice di destinazione e come valore il peso dell'arco.
-In questo modo, per accedere agli archi uscenti da un determinato vertice, si può semplicemente accedere alla mappa secondaria della scatola corrispondente e navigare tra le etichette. Ciò garantisce un accesso rapido e facile agli archi in base al vertice di origine, senza la necessità di scansionare tutti i vertici del grafo.*/
-
-    std::string name; //nome del grafo idealmente usato in costruttori
 };
 
-//!! da rifare completamente ma dato che sono noti basta copiare una diversa implementazione
+
+
 
 template <typename T>
-std::unordered_map<T, int> Graph<T>::dijkstra(Graph<T>& graph, T src) {
-    // implementazione dell'algoritmo di Dijkstra
-            std::unordered_map<T, int> dist;
-            std::unordered_map<T, T> prev;
-            std::unordered_map<T, int> INT_MAX;
-    
-            // Inizializzazione
-            for (auto v : vertices) {
-                dist[v] = INT_MAX;
-                prev[v] = -1;
-            }
-            dist[src] = 0;
+void Graph<T>::addVertex(T vertex)
+{
 
-            // Relaxazione degli archi |V|-1 volte
-            for (int i = 0; i < vertices.size() - 1; i++) {
-                for (auto u : vertices) {
-                    for (auto e : edges[u]) {
-                        T v = e.first;
-                        int weight = e.second;
-                        if (dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
-                            dist[v] = dist[u] + weight;
-                            prev[v] = u;
-                        }
-                    }
-                }
-            }
-        };
-
-template <typename T>
-std::unordered_map<T, int> Graph<T>::bellmanFord(Graph<T>& graph, T src) {
-    // implementazione dell'algoritmo di Bellman-Ford
-    std::unordered_map<T, int> dist;
-            std::unordered_map<T, T> prev;
-            std::priority_queue<std::pair<int, T>, std::vector<std::pair<int, T>>, std::greater<>> pq;
-            std::unordered_map<T, int> INT_MAX; //capire come funzionano le mappe
-    
-            // Inizializzazione
-            for (auto v : vertices) {
-                dist[v] = INT_MAX;
-                prev[v] = -1;
-            }
-            dist[src] = 0;
-            pq.push({0, src});
-
-            // Relaxazione degli archi
-            while (!pq.empty()) {
-                T u = pq.top().second;
-                pq.pop();
-
-                for (auto e : edges[u]) {
-                    T v = e.first;
-                    int weight = e.second;
-                    if (dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
-                        dist[v] = dist[u] + weight;
-                        prev[v] = u;
-                        pq.push({dist[v], v});
-                    }
-                }
-            }
-        };
-
-
-//!! riscrivere i commenti e riformulare le funzioni cambiando anche ordine in cui compaiono o parentesi/identatura
-
-template <typename T> //questa è semplice probabilmente basta riformulare in altri termini
-void Graph<T>::addVertex(T vertex) {
-    // controllo se il vertice esiste già
-    auto it = std::find(vertices.begin(), vertices.end(), vertex); // cerca tra i vertici quello che vogliamo aggiungere
-    if (it == vertices.end()) { // se non dovesse esistere lo aggiunge al vettore dei vertici        
-        vertices.push_back(vertex);
-    }
-}
-
-template <typename T>
-void Graph<T>::removeVertex(T vertex) {
-    // controllo se il vertice esiste
-    auto it = std::find(vertices.begin(), vertices.end(), vertex);
-    if (it != vertices.end()) {
-        // se esiste, lo rimuovo dal vettore dei vertici
-        vertices.erase(it);
-        // rimuovo anche tutti gli archi che includono il vertice
-        edges.erase(vertex);
-        for (auto& e : edges) {
-            e.second.erase(vertex);
-        }
-    }
+	if (std::find(vertices.begin(), vertices.end(), vertex) == vertices.end())	//if the vertex is not already existing in the vector
+	{
+		vertices.push_back(vertex);												//add it to the vector of vertices
+	}
+	else
+	{
+		std::cout << E_VERTEX_ALREADY_EXISTING;
+	}
+	//else ignore, potential TODO: error message abo
 }
 
 template <typename T>
 void Graph<T>::addEdge(T src, T dest, int weight) {
-    // controllo che i vertici esistano
-    if (std::find(vertices.begin(), vertices.end(), src) != vertices.end() &&
-        std::find(vertices.begin(), vertices.end(), dest) != vertices.end()) {
-        // aggiungo l'arco
-        edges[src][dest] = weight;
-    }
+	// controllo che i vertici esistano
+	if (std::find(vertices.begin(), vertices.end(), src) != vertices.end() &&
+		std::find(vertices.begin(), vertices.end(), dest) != vertices.end()) {
+		// aggiungo l'arco
+		edges[src][dest] = weight;
+	}
+	else
+	{
+		std::cout << E_MISSING_VERTEX;
+	}
+}
+
+template <typename T>
+void Graph<T>::removeVertex(T vertex)
+{
+	// controllo se il vertice esiste con un iteratore? TODO errori
+	auto it = std::find(vertices.begin(), vertices.end(), vertex);
+	if (it != vertices.end())
+	{
+		// se esiste, lo rimuovo dal vettore dei vertici
+		vertices.erase(it);
+		// rimuovo anche tutti gli archi che includono il vertice
+		edges.erase(vertex);
+		for (auto& e : edges)
+		{
+			e.second.erase(vertex);
+		}
+	}
 }
 
 template <typename T>
 void Graph<T>::removeEdge(T src, T dest) {
-    // controllo che l'arco esista
-    if (edges.count(src) && edges[src].count(dest)) {
-        // rimuovo l'arco
-        edges[src].erase(dest);
-    }
+	// controllo che l'arco esista come?? TODO errori
+	if (edges.count(src) && edges[src].count(dest)) {
+		// rimuovo l'arco
+		edges[src].erase(dest);
+	}
 }
-
 #endif
