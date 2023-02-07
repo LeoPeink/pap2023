@@ -1,6 +1,3 @@
-#ifndef guard
-#define guard
-
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
@@ -14,21 +11,22 @@ class Graph
 {
 public:
 	//costruttori
-	Graph() {};
-	Graph(std::string name) : name{ name } {};
+	Graph() { name = ""; };							//costruttore di default, vuoto ma inizializza un nome a "".
+	Graph(std::string name) : name{ name } {};		//costruttore che specifica un nome, preso come parametro dal costruttore.
 
-	//funzioni
-	void addVertex(T vertex);    // non sono metodi costanti ne statici in quanto modificano l'oggetto
+	//metodi di instanza
+	void addVertex(T vertex);    // non sono metodi costanti in quanto modificano l'oggetto direttamente, non sono statici perchè ogniuno modifica l'instanza da cui viene chiamato.
 	void removeVertex(T vertex);
 	void addEdge(T src, T dest, int weight);
 	void removeEdge(T src, T dest);
 
 	//metodi statici
-	static const std::unordered_map<T, int> dijkstra(Graph<T> g, T src);	
+	static const std::unordered_map<T, int> dijkstra(Graph<T> g, T src);
 	static const std::unordered_map<T, int> bellmanFord(Graph<T> g, T src);
-	//statici perchÃ¨ metodi di classe, const perchÃ¨ non devono modificare il grafo ma solo generare la tabella di distanze: per lo stesso motivo, passiamo il grafo per valore.
+	//statici perchè metodi di classe, const perchè non devono modificare il grafo ma solo generare la tabella di distanze, infatti passiamo il grafo per valore.
 
 	//getter
+	std::string getName() { return name; }
 	std::vector<T> getVertices() { return vertices; }
 	std::unordered_map<T, std::unordered_map<T, int>> getEdges() { return edges; }
 
@@ -36,24 +34,21 @@ public:
 	class vertex_iterator
 	{
 	public:
-		using iterator_category = std::forward_iterator_tag;	//perchÃ¨ proprio un iteratore forward?
-		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori Ã¨ un ptrdiff_type 
+		using iterator_category = std::forward_iterator_tag;	//TODO comment
+		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori è un ptrdiff_type 
 		using value = T;										//il tipo di dato che contiene l'iteratore
 		using pointer = value*;									//il tipo di dato puntato dall'iteratore
 		using reference = value&;								//il tipo riferimento puntato dall'iteratore
 
-		vertex_iterator() : ptr{ nullptr } {};							//costruttore di default
-		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchÃ¨ giÃ  implicitamente implementato TODO capire(?)
-		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchÃ¨ giÃ  implicitamente implementato TODO capire(?)
-		vertex_iterator& operator++() { ++ptr; return *this; }						//operatore di incremento prefisso
-		vertex_iterator operator++(int) { vertex_iterator tmp{ *this }; ++ptr; return tmp; }	//operatore di incemento postfisso
+		vertex_iterator() : ptr{ nullptr } {};					//costruttore di default
+		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchè già implicitamente implementato 
+		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchè già implicitamente implementato
+		vertex_iterator& operator++() { ++ptr; return *this; }								//operatore di incremento prefisso
+		vertex_iterator operator++(int) { vertex_iterator tmp{ *this }; ++ptr; return tmp; }//operatore di incemento postfisso
 		inline reference operator*() { return *ptr; }										//operatore di dereferenziazione
 		inline pointer operator->() { return ptr; }											//operatore puntatore			
 		inline bool operator==(const vertex_iterator& it) { return ptr == it.ptr; }			//operatore uguaglianza
 		inline bool operator!=(const vertex_iterator& it) { return ptr != it.ptr; }			//operatore disuguaglianza
-		//NB:inline per efficienza, non serve chiamare la funzione, basta far copiare il codice al compilatore al momento della chiamata
-
-		//iterator(typename std::vector<T>::iterator it) : it{ it } {}; 
 
 	private:
 		vertex_iterator(pointer ptr) : ptr{ ptr } {};		//costruttore privato per creare un iteratore a partire da un puntatore: privato per evitare mismatch di tipi tra il container e l'iteratore
@@ -63,22 +58,21 @@ public:
 		friend class Graph<T>;	//permette a Graph di accedere ai membri privati di iterator
 	};
 
-	inline vertex_iterator v_begin() { return vertex_iterator{ &vertices[0] }; }	//ritorna un iteratore al primo elemento del vettore,
-	inline vertex_iterator v_end() { return vertex_iterator{ &vertices[vertices.size() - 1] + 1 }; }	//ritorna un iteratore all'ultimo elemento del vettore,
-
+	/*
+	//tentativo di implementazione di un iteratore per scorrere gli archi.
 	class edge_iterator
 	{
 	public:
 
-		using iterator_category = std::forward_iterator_tag;	//perchÃ¨ proprio un iteratore forward?
-		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori Ã¨ un ptrdiff_type 
+		using iterator_category = std::forward_iterator_tag;	//perchè proprio un iteratore forward?
+		using difference_type = std::ptrdiff_t;					//la differenza tra puntatori è un ptrdiff_type 
 		using value = T;										//il tipo di dato che contiene l'iteratore
 		using pointer = value*;									//il tipo di dato puntato dall'iteratore
 		using reference = value&;								//il tipo riferimento puntato dall'iteratore
 
 		edge_iterator() : ptr{ nullptr } {};							//costruttore di default
-		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchÃ¨ giÃ  implicitamente implementato TODO capire(?)
-		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchÃ¨ giÃ  implicitamente implementato TODO capire(?)
+		//iterator(const iterator& it) : it{ it.it } {};									//costruttore di copia: inutile perchè già implicitamente implementato TODO capire(?)
+		//iterator& operator=(const iterator& it) { this->it = it.it; return *this; }		//operatore di copia  : inutile perchè già implicitamente implementato TODO capire(?)
 		edge_iterator& operator++() { ++ptr; return *this; }								//operatore di incremento prefisso
 		edge_iterator operator++(int) { edge_iterator tmp{ *this }; ++ptr; return tmp; }	//operatore di incemento postfisso
 		inline reference operator*() { return *ptr; }										//operatore di dereferenziazione
@@ -96,6 +90,12 @@ public:
 
 	inline edge_iterator e_begin() { return  edge_iterator{ edges.begin() }; }	//ritorna un iteratore al primo elemento della mappa, TODO CHECK SE FUNZIONA
 	inline edge_iterator e_end() { return edge_iterator{ edges.end() }; }	//ritorna un iteratore all'ultimo elemento del vettore,	TODO CHECK SE FUNZIONA
+	
+	*/
+
+
+	inline vertex_iterator v_begin() { return vertex_iterator{ &vertices[0] }; }	//ritorna un iteratore al primo elemento del vettore di vertici
+	inline vertex_iterator v_end() { return vertex_iterator{ &vertices[vertices.size() - 1] + 1 }; }	//ritorna un iteratore all'ultimo elemento del vettore di vertici
 
 private:
 	std::string name;
@@ -103,5 +103,3 @@ private:
 	std::unordered_map<T, std::unordered_map<T, int>> edges;
 
 };
-
-#endif
