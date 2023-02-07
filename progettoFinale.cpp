@@ -2,7 +2,6 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
-#include <limits.h>
 #include "errorMessages.h"
 
 //todo dividere in files
@@ -163,33 +162,46 @@ void Graph<T>::removeEdge(T src, T dest) {
 
 
 template <typename T>
-const std::unordered_map<T, int> Graph<T>::dijkstra(Graph<T> g, T src)		//TODO min heap per la coda, ora è v2
+const std::unordered_map<T, int> Graph<T>::dijkstra(Graph<T> g, T src)
 {
 	// implementazione dell'algoritmo di Dijkstra
 	std::unordered_map<T, int> dist;		//mappa di distanze A : 6, C : 9
 	std::unordered_map<T, T> prev;			//precedente: C:A -> C precede A, per estrarre il PRECEDENTE si chiama FIRST
-	//std::vector<T> queue;					//coda di vertici
-
+	std::vector<T> queue;	//tiene traccia dei vertici già visitati
+	
 	// Inizializzazione
 	for (auto it = g.v_begin(); it != g.v_end(); ++it)		//itero i vertici con vertex_iterator
 	{
+		//TODO capire *it
 		dist[*it] = INT_MAX;								//la distanza da src va a infinito
-		prev[*it] = -1;										//il precedente è -1, = null
-		//queue.push_back(*it);								//aggiungo il vertice alla coda
+		prev[*it] = "";										//il precedente è -1, = null
+		queue.push_back(*it);								//aggiungo il vertice alla coda
 	}
 	dist.at(src) = 0;	//la distanza da src a src è 0 ovviamente
 
-	//iterate through all vertices
-	for (int i = 0; i < g.getVertices().size() - 1; i++) //TODO coda di priorità
+
+
+	//finchè la coda non è vuota
+	while(queue.size()>0)
 	{
-		for (auto it = g.v_begin(); it != g.v_end(); ++it)		//vrtx corrente = *it
+		//trova il vertice minore NELLA CODA
+		int min = INT_MAX;
+		T min_key;
+		for (auto it = queue.begin(); it != queue.end(); ++it)
 		{
-
-			//std::cout << "VERTICE IN ANALISI: " << *it << std::endl;
-
+			if (dist.at(*it) <= min)
+			{
+				min = dist.at(*it);
+				min_key = *it;
+			}
+		}
+	
+		//toglilo dalla coda
+		queue.erase(find(queue.begin(), queue.end(), min_key));
+		
 			try
 			{
-				auto nears = g.getEdges().at(*it);	//nears contiene i vicini del vertice corrente
+				auto nears = g.getEdges().at(min_key);	//nears contiene i vicini del vertice corrente
 				for (auto e_it = nears.begin(); e_it != nears.end(); ++e_it) //per ogniuno dei vicini (gli adiacenti al vrtx corrente)
 				{
 					auto v = e_it->first;									//"v" contiene il nome del vicino, es. "A"
@@ -197,10 +209,10 @@ const std::unordered_map<T, int> Graph<T>::dijkstra(Graph<T> g, T src)		//TODO m
 
 					//std::cout << "ARCO:" << *it << " -> " << v << ", PESO: " << weight << std::endl;
 
-					if (dist.at(*it) != INT_MAX && (dist.at(*it) + weight) < dist.at(v)) //se la distanza non è INF e  
+					if (dist.at(min_key) != INT_MAX && (dist.at(min_key) + weight) < dist.at(v)) //se la distanza non è INF e  
 					{
-						dist.at(v) = dist.at(*it) + weight;
-						prev.at(v) = *it;
+						dist.at(v) = dist.at(min_key) + weight;
+						prev.at(v) = min_key;
 					}
 				}
 				//std::cout << std::endl;
@@ -209,9 +221,8 @@ const std::unordered_map<T, int> Graph<T>::dijkstra(Graph<T> g, T src)		//TODO m
 			{
 				//TODO gestire l'eccezione, viene quando un vertice non ha vicini
 			}
-		}
 	}
-
+	
 	return dist;
 }
 
@@ -331,33 +342,5 @@ int main()
 	{
 		std::cout << it->first << " " << it->second << std::endl;
 	}
-
-
-	/*
-	auto res = bellmanFord(g1, src);
-	for (auto it = res.begin(); it != res.end(); ++it)
-	{
-		std::cout << it->first << " " << it->second << std::endl;
-	}
-	*/
-
-
-	/*
-	//TEST iteratore per i vertici
-	for (auto it = g.v_begin(); it != g.v_end(); ++it)
-	{
-		std::cout << *it << std::endl;
-	}
-
-	//TEST iteratore per gli archi
-	for (auto& lista : g.getEdges())
-	{
-		std::cout << lista.first << std::endl;
-		for (auto& arco : lista.second)
-		{
-			std::cout << arco.first << " " << arco.second << std::endl;
-		}
-	}
-	*/
 
 }
