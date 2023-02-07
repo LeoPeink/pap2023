@@ -1,5 +1,5 @@
 # pap2023
-Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023 : realizzazione di una classe template per la creazione di grafi ed implementazione degli algoritmi di ottimizzazione per la ricerca del percorso di costo minimo, Dijkstra e Bellman-Ford.
+Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023 : realizzazione di una classe template per la creazione di grafi ed implementazione degli algoritmi di ottimizzazione per la ricerca del percorso di costo minimo "Dijkstra" e "Bellman-Ford".
  
 # DOCUMENTATION
 Includendo Graph.cpp si includono automaticamente:
