@@ -2,7 +2,7 @@
 Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023
  
 # DOCUMENTATION
-Per l'utilizzo della classe Graph sono necessarie le seguenti librerie:
+Includendo Graph.cpp si includono automaticamente:
 
 <iostream>
 
