@@ -4,15 +4,12 @@ Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023 : realizzazio
  
 # Documentazione
 Includendo Graph.cpp si includono automaticamente:
-
 iostream, unordered_map, vector, limits.h, algorithm
 
 ## Graph
-
 Graph è una classe template che accetta qualsiasi tipo primitivo come T.
 
 ### Attributi
-
  Graph non espone attributi pubblici.
  
  (private) std::vector<T> vertices
