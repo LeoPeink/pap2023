@@ -5,11 +5,7 @@ Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023 : realizzazio
 # Documentazione
 Includendo Graph.cpp si includono automaticamente:
 
-<iostream>
-<unordered_map>
-<vector>
-<limits.h>
-<algorithm>
+iostream, unordered_map, vector, limits.h, algorithm
 
 ## Graph
 
@@ -25,7 +21,7 @@ Graph è una classe template che accetta qualsiasi tipo primitivo come T.
 
  (private) std::unordered_map<T, std::unordered_map<T, int>> edges;
 
-### Metodi
+### Metodi pubblici
  
 std::string getName(): restituisce il nome del grafo
  
@@ -45,7 +41,7 @@ void removeVertex(T v): rimuove v da vertices
  
  (private) std::unordered_map<T, std::unordered_map<T, int>> getEdges(): restituisce la mappa di mappe contenente archi e pesi
  
- ### Metodi di classe
+ ### Metodi della classe
  
  std::unordered_map<T, int>> dijkstra(Graph<T> g, T src): esegue l'algoritmo di Dijkstra sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
  
