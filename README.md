@@ -1,6 +1,8 @@
 # Programmazione Avanzata e Parallela 2023
  
-Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023 : realizzazione di una classe template per la creazione di grafi ed implementazione degli algoritmi di ottimizzazione per la ricerca del percorso di costo minimo "Dijkstra" e "Bellman-Ford". Leo Peinkhofer, Lorenzo Di Bernardo
+Progetto di Programmazione Avanzata e Parallela, UniTS, AIDA, 2023 : realizzazione di una classe template per la creazione di grafi ed implementazione degli algoritmi di ottimizzazione per la ricerca del percorso di costo minimo "Dijkstra" e "Bellman-Ford".
+
+Autori: Leo Peinkhofer, Lorenzo Di Bernardo
  
 # Documentazione
 Includendo Graph.cpp si includono automaticamente le librerie:
