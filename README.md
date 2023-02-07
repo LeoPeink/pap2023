@@ -46,14 +46,14 @@ void removeVertex(T v): rimuove v da vertices
  
 std::unordered_map<T, int>> bellmanFord(Graph<T> g, T src): esegue l'algoritmo di Bellman-Ford sul grafo g specificato, a partire dal nodo src. Ritorna la lista delle distanze come mappa di coppie "nodo di arrivo" : costo di arrivo.
  
- ##errorMessages.h
+ ## errorMessages.h
  
  Questo file contiene vari messaggi di errore che vengono usati per gestire a livello di interfaccia utente alcune eccezioni o casi limite come inserimento utente sbagliato.
  
- ##main.cpp
+ ## main.cpp
  
  Questo file sorgente contiene un metodo main() con un menu pre-configurato, al fine di verificare facilmente il funzionamento della libreria tramite CLI.
  
- ##Demo images
+ ## Demo images
  
 La cartella contiene la rappresentazione grafica dei grafi pre-impostati nel menu per facilitare il test della libreria.
