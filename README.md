@@ -50,7 +50,7 @@ std::unordered_map<T, int>> bellmanFord(Graph<T> g, T src): esegue l'algoritmo d
  
  ## errorMessages.h
  
- Questo file contiene vari messaggi di errore che vengono usati per gestire a livello di interfaccia utente alcune eccezioni o casi limite come inserimento utente sbagliato.
+ Questo file contiene vari messaggi di errore che vengono usati per gestire a livello di interfaccia utente alcune eccezioni o casi limite.
  
  ## main.cpp
  
