@@ -1,4 +1,3 @@
-#pragma once
 
 //file per mantenere in modo ordinato i diversi messaggi di errore che potrebbero presentarsi durante l'uso dell'interfaccia.
 
