@@ -9,8 +9,6 @@
 
 #include "errorMessages.h"
 
-//todo dividere in files
-
 template <typename T>
 class Graph
 {
@@ -26,7 +24,7 @@ public:
 	void removeEdge(T src, T dest);
 
 	//metodi statici
-	static const std::unordered_map<T, int> dijkstra(Graph<T> g, T src);		//TODO min heap per la coda, ora è v2
+	static const std::unordered_map<T, int> dijkstra(Graph<T> g, T src);	
 	static const std::unordered_map<T, int> bellmanFord(Graph<T> g, T src);
 	//statici perchè metodi di classe, const perchè non devono modificare il grafo ma solo generare la tabella di distanze: per lo stesso motivo, passiamo il grafo per valore.
 
@@ -121,7 +119,7 @@ void Graph<T>::addVertex(T vertex)
 	{
 		std::cout << E_VERTEX_ALREADY_EXISTING;
 	}
-	//else ignore, potential TODO: error message abo
+	
 }
 
 template <typename T>
